@@ -1,0 +1,131 @@
+{
+  "total": 66,
+  "success": 29,
+  "failed": 37,
+  "orgs": {
+    "University of Michigan": {
+      "success": 0,
+      "failed": 1
+    },
+    "Purdue University": {
+      "success": 0,
+      "failed": 1
+    },
+    "University of North Carolina at Chapel Hill": {
+      "success": 0,
+      "failed": 1
+    },
+    "Arizona State University": {
+      "success": 3,
+      "failed": 2
+    },
+    "University of British Columbia": {
+      "success": 1,
+      "failed": 0
+    },
+    "University of California, Davis": {
+      "success": 0,
+      "failed": 1
+    },
+    "University of California, Irvine": {
+      "success": 0,
+      "failed": 1
+    },
+    "University of Florida": {
+      "success": 1,
+      "failed": 4
+    },
+    "University of California, San Diego": {
+      "success": 0,
+      "failed": 1
+    },
+    "Northern Virginia Community College": {
+      "success": 0,
+      "failed": 1
+    },
+    "University of Southern California": {
+      "success": 0,
+      "failed": 1
+    },
+    "University of Illinois at Urbana-Champaign": {
+      "success": 0,
+      "failed": 2
+    },
+    "Pennsylvania State University-Main Campus": {
+      "success": 0,
+      "failed": 1
+    },
+    "Indiana University Bloomington": {
+      "success": 0,
+      "failed": 1
+    },
+    "Georgia Institute of Technology": {
+      "success": 0,
+      "failed": 1
+    },
+    "University of Maryland": {
+      "success": 0,
+      "failed": 1
+    },
+    "University of Pennsylvania": {
+      "success": 8,
+      "failed": 0
+    },
+    "University of California, Berkeley": {
+      "success": 3,
+      "failed": 3
+    },
+    "Boston University": {
+      "success": 0,
+      "failed": 1
+    },
+    "University of Texas at Austin": {
+      "success": 0,
+      "failed": 1
+    },
+    "Carnegie Mellon University": {
+      "success": 0,
+      "failed": 1
+    },
+    "Massachusetts Institute of Technology": {
+      "success": 3,
+      "failed": 3
+    },
+    "University of Toronto": {
+      "success": 1,
+      "failed": 0
+    },
+    "University of Washington": {
+      "success": 0,
+      "failed": 1
+    },
+    "New York University": {
+      "success": 4,
+      "failed": 0
+    },
+    "Columbia University": {
+      "success": 0,
+      "failed": 1
+    },
+    "University of California, Los Angeles": {
+      "success": 5,
+      "failed": 0
+    },
+    "Princeton University": {
+      "success": 0,
+      "failed": 1
+    },
+    "Harvard University": {
+      "success": 0,
+      "failed": 3
+    },
+    "Stanford University": {
+      "success": 0,
+      "failed": 1
+    },
+    "Yale University": {
+      "success": 0,
+      "failed": 1
+    }
+  }
+}

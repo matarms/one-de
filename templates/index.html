@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google One (Gemini) Verification Tool - Web Console</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        gemini: {
+                            50: '#f0f4ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e1b4b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-button {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-button:hover:not(:disabled) {
+            box-shadow: 0 0 35px 0px rgba(59, 130, 246, 0.7);
+            transform: translateY(-1px);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.5);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen font-sans selection:bg-blue-600 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800/80 sticky top-0 z-40 bg-[#0b0f19]/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-graduation-cap text-white text-lg"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">One Verify Tool</span>
+                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">v2.0 Web</span>
+                    </div>
+                    <p class="text-xs text-slate-400">SheerID Student Verification for Google One AI Premium</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="/docs" target="_blank" class="px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white rounded-lg hover:bg-slate-800 transition flex items-center gap-1.5 border border-slate-700/60">
+                    <i class="fa-solid fa-book text-blue-400"></i> API Docs
+                </a>
+                <button onclick="openStatsModal()" class="px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white rounded-lg hover:bg-slate-800 transition flex items-center gap-1.5 border border-slate-700/60">
+                    <i class="fa-solid fa-chart-pie text-cyan-400"></i> Thống kê
+                </button>
+                <div class="h-4 w-px bg-slate-800"></div>
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Railway Online</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Top Banner / Notice -->
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-blue-900/30 via-indigo-900/20 to-slate-900/40 border border-blue-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0">
+                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-white">Xác minh Google One (Gemini Advanced 2TB) tự động qua SheerID</h3>
+                    <p class="text-xs text-slate-400">Hỗ trợ tự tạo thẻ sinh viên, thời khóa biểu, biên lai học phí kèm giải Captcha và cấp phát IP Dân cư Mỹ.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-slate-300 self-end md:self-auto">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-emerald-400"></i> Anti-Detection</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-amber-400"></i> Auto Polling</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-id-card text-blue-400"></i> Ivy & State Styles</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Column: Controls & Input Form (5 cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="glass-panel rounded-3xl p-6 shadow-xl border border-slate-800">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2 mb-5">
+                        <i class="fa-solid fa-sliders text-blue-500"></i> Cấu hình xác minh
+                    </h2>
+
+                    <form id="verifyForm" onsubmit="startVerification(event)" class="space-y-5">
+                        <!-- Verification URL -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">
+                                Link xác minh SheerID <span class="text-red-400">*</span>
+                            </label>
+                            <div class="relative">
+                                <textarea id="urlInput" rows="3" required
+                                    placeholder="https://services.sheerid.com/verify/67c8c14f5f17a83b745e3f82/?verificationId=67...abc"
+                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 font-mono transition resize-none"></textarea>
+                                <button type="button" onclick="pasteFromClipboard()" title="Dán từ Clipboard"
+                                    class="absolute top-2 right-2 px-2.5 py-1 text-[11px] font-medium rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 transition">
+                                    <i class="fa-regular fa-clipboard"></i> Dán
+                                </button>
+                            </div>
+                            <div id="urlHint" class="mt-1 text-[11px] text-slate-400 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-info text-[10px]"></i> Link phải chứa tham số <code class="text-blue-400">verificationId=...</code>
+                            </div>
+                        </div>
+
+                        <!-- University Selection -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">
+                                Trường đại học (University)
+                            </label>
+                            <div class="relative">
+                                <select id="schoolSelect"
+                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition appearance-none cursor-pointer">
+                                    <option value="">🎲 Tự động chọn (Theo trọng số cao nhất)</option>
+                                    <option value="3491">🏛️ UC Berkeley (State - Trọng số 97%)</option>
+                                    <option value="1953">🏛️ MIT - Massachusetts Institute of Tech (Ivy - 95%)</option>
+                                    <option value="1426">🏛️ Harvard University (Ivy - 92%)</option>
+                                    <option value="3535">🏛️ UIUC - Univ of Illinois Urbana-Champaign (State - 91%)</option>
+                                    <option value="3629">🏛️ UPenn - Univ of Pennsylvania (Ivy - 90%)</option>
+                                    <option value="3521">🏛️ University of Florida (State - 90%)</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mode Selection -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">
+                                Chế độ thực thi
+                            </label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="relative flex flex-col p-3 rounded-xl border border-slate-700 bg-slate-900/60 cursor-pointer hover:border-blue-500/50 transition">
+                                    <input type="radio" name="mode" value="auto" checked class="sr-only peer">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-xs font-bold text-white peer-checked:text-blue-400">🚀 Tự động</span>
+                                        <div class="w-3.5 h-3.5 rounded-full border border-slate-600 peer-checked:border-blue-500 peer-checked:bg-blue-500 flex items-center justify-center">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400">Tự submit, giải Captcha, up ảnh và đợi duyệt</span>
+                                </label>
+                                <label class="relative flex flex-col p-3 rounded-xl border border-slate-700 bg-slate-900/60 cursor-pointer hover:border-blue-500/50 transition">
+                                    <input type="radio" name="mode" value="docs_only" class="sr-only peer">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-xs font-bold text-white peer-checked:text-blue-400">📄 Chỉ tạo ảnh</span>
+                                        <div class="w-3.5 h-3.5 rounded-full border border-slate-600 peer-checked:border-blue-500 peer-checked:bg-blue-500 flex items-center justify-center">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400">Chỉ sinh 3 giấy tờ để tải về tự nộp</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Proxy Settings (Collapsible) -->
+                        <div class="rounded-2xl border border-slate-800 bg-slate-950/40 overflow-hidden">
+                            <button type="button" onclick="toggleProxySettings()" class="w-full px-4 py-2.5 flex items-center justify-between text-xs font-semibold text-slate-300 hover:text-white transition">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-network-wired text-indigo-400"></i> Cấu hình Proxy & IP
+                                </span>
+                                <i id="proxyChevron" class="fa-solid fa-chevron-right text-[10px] text-slate-500 transition-transform"></i>
+                            </button>
+                            <div id="proxyPanel" class="p-4 space-y-3 border-t border-slate-800/80 hidden">
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                                        <input type="radio" name="proxy_mode" value="direct" checked onchange="updateProxyMode()" class="text-blue-500 focus:ring-0">
+                                        <span>Chạy trực tiếp qua IP Server (Khuyên dùng trên Railway - Siêu tốc 0.2s)</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                                        <input type="radio" name="proxy_mode" value="env" onchange="updateProxyMode()" class="text-blue-500 focus:ring-0">
+                                        <span>Dùng Proxy Dân Cư từ Môi trường (Proxy-Cheap)</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                                        <input type="radio" name="proxy_mode" value="custom" onchange="updateProxyMode()" class="text-blue-500 focus:ring-0">
+                                        <span>Tùy chỉnh Proxy URL riêng (Tự động xoay Session nếu có)</span>
+                                    </label>
+                                </div>
+                                <div id="customProxyBox" class="hidden pt-2">
+                                    <input type="text" id="customProxyInput" placeholder="http://user-session-xxx:pass@host:port"
+                                        class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono">
+                                    <p class="text-[10px] text-slate-400 mt-1">🔄 Tự động sinh và thay thế session mới mỗi lần bấm xác minh.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2Captcha API Key (Collapsible) -->
+                        <div class="rounded-2xl border border-slate-800 bg-slate-950/40 overflow-hidden">
+                            <button type="button" onclick="toggleCaptchaSettings()" class="w-full px-4 py-2.5 flex items-center justify-between text-xs font-semibold text-slate-300 hover:text-white transition">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-key text-amber-400"></i> Cấu hình 2Captcha Key (Tùy chọn)
+                                </span>
+                                <i id="captchaChevron" class="fa-solid fa-chevron-right text-[10px] text-slate-500 transition-transform"></i>
+                            </button>
+                            <div id="captchaPanel" class="p-4 space-y-2 border-t border-slate-800/80 hidden">
+                                <input type="password" id="captchaKeyInput" placeholder="Mặc định dùng key có sẵn trong cấu hình..."
+                                    class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono">
+                                <p class="text-[10px] text-slate-500">Để trống sẽ dùng key mặc định từ biến môi trường của server.</p>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-2 flex gap-3">
+                            <button type="submit" id="submitBtn"
+                                class="flex-1 py-3 px-6 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center justify-center gap-2 glow-button disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fa-solid fa-rocket"></i> Bắt đầu xác minh
+                            </button>
+                            <button type="button" id="cancelBtn" onclick="cancelCurrentTask()"
+                                class="hidden py-3 px-4 rounded-xl font-bold text-sm bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-stop"></i> Dừng
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Quick Stats Mini Card -->
+                <div class="glass-panel rounded-3xl p-5 border border-slate-800 grid grid-cols-3 gap-3 text-center">
+                    <div class="p-3 rounded-2xl bg-slate-900/60 border border-slate-800/80">
+                        <span class="text-[11px] text-slate-400 font-medium block mb-1">Tổng lượt chạy</span>
+                        <span id="quickTotal" class="text-xl font-extrabold text-white">--</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
+                        <span class="text-[11px] text-emerald-400 font-medium block mb-1">Thành công</span>
+                        <span id="quickSuccess" class="text-xl font-extrabold text-emerald-400">--</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-blue-500/5 border border-blue-500/20">
+                        <span class="text-[11px] text-blue-400 font-medium block mb-1">Tỷ lệ đậu</span>
+                        <span id="quickRate" class="text-xl font-extrabold text-blue-400">--%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Live Console, Progress & Results (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Progress Header Card -->
+                <div class="glass-panel rounded-3xl p-6 border border-slate-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span id="statusIndicator" class="w-3 h-3 rounded-full bg-slate-600"></span>
+                            <span id="statusText" class="text-xs font-bold uppercase tracking-wider text-slate-400">Sẵn sàng chạy</span>
+                        </div>
+                        <span id="progressPercent" class="text-sm font-extrabold font-mono text-blue-400">0%</span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden relative">
+                        <div id="progressBar" class="h-full bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400 transition-all duration-500 rounded-full" style="width: 0%"></div>
+                    </div>
+
+                    <!-- Step badges -->
+                    <div class="grid grid-cols-5 gap-2 mt-4 text-center">
+                        <div id="stepBadge1" class="py-1 px-1.5 rounded-lg bg-slate-800/50 text-[10px] font-semibold text-slate-500">1. Check Link</div>
+                        <div id="stepBadge2" class="py-1 px-1.5 rounded-lg bg-slate-800/50 text-[10px] font-semibold text-slate-500">2. Sinh hồ sơ</div>
+                        <div id="stepBadge3" class="py-1 px-1.5 rounded-lg bg-slate-800/50 text-[10px] font-semibold text-slate-500">3. Tạo giấy tờ</div>
+                        <div id="stepBadge4" class="py-1 px-1.5 rounded-lg bg-slate-800/50 text-[10px] font-semibold text-slate-500">4. Nộp SheerID</div>
+                        <div id="stepBadge5" class="py-1 px-1.5 rounded-lg bg-slate-800/50 text-[10px] font-semibold text-slate-500">5. Duyệt kết quả</div>
+                    </div>
+                </div>
+
+                <!-- Result Banner (Hidden initially) -->
+                <div id="resultCard" class="hidden rounded-3xl p-6 border transition-all animate-fade-in">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Generated Documents Showcase (Hidden initially) -->
+                <div id="docsCard" class="hidden glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-regular fa-images text-blue-400"></i> Giấy tờ minh chứng đã tạo
+                        </h3>
+                        <span class="text-xs text-slate-400">Nhấn vào ảnh để xem chi tiết</span>
+                    </div>
+
+                    <div id="docsGallery" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Live Terminal Console -->
+                <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden shadow-2xl flex flex-col">
+                    <!-- Console Header -->
+                    <div class="px-5 py-3.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="flex gap-1.5">
+                                <span class="w-3 h-3 rounded-full bg-red-500/80 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-yellow-500/80 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-green-500/80 inline-block"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400 ml-2">Console Live Log</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="flex items-center gap-1.5 text-[11px] text-slate-400 cursor-pointer">
+                                <input type="checkbox" id="autoScrollCheck" checked class="rounded bg-slate-800 border-slate-700 text-blue-500 focus:ring-0">
+                                <span>Auto scroll</span>
+                            </label>
+                            <button onclick="copyLogs()" title="Sao chép toàn bộ log"
+                                class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> Sao chép
+                            </button>
+                            <button onclick="clearLogs()" title="Xóa log"
+                                class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Console Body -->
+                    <div id="terminalBody" class="p-4 bg-[#070b13] font-mono text-xs text-slate-300 overflow-y-auto h-[380px] space-y-1">
+                        <div class="text-slate-500 italic">-- Sẵn sàng. Nhập link xác minh và nhấn "Bắt đầu xác minh" --</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Lightbox Modal for Image Preview -->
+    <div id="imageModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden flex items-center justify-center p-4" onclick="closeImageModal()">
+        <div class="relative max-w-5xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
+            <button onclick="closeImageModal()" class="absolute -top-12 right-0 text-white hover:text-slate-300 text-2xl transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <img id="modalImage" src="" alt="Preview" class="max-h-[80vh] max-w-full rounded-2xl shadow-2xl object-contain border border-slate-700">
+            <div class="mt-4 flex gap-3">
+                <a id="modalDownloadLink" href="" download class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> Tải về ảnh gốc
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div id="statsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4" onclick="closeStatsModal()">
+        <div class="glass-panel rounded-3xl p-6 max-w-lg w-full border border-slate-700 space-y-5" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-chart-simple text-blue-400"></i> Thống kê hệ thống
+                </h3>
+                <button onclick="closeStatsModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800">
+                    <span class="text-xs text-slate-400 block mb-1">Tổng lượt chạy</span>
+                    <span id="modalTotal" class="text-xl font-bold text-white">0</span>
+                </div>
+                <div class="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                    <span class="text-xs text-emerald-400 block mb-1">Thành công</span>
+                    <span id="modalSuccess" class="text-xl font-bold text-emerald-400">0</span>
+                </div>
+                <div class="p-3 rounded-2xl bg-red-500/10 border border-red-500/20">
+                    <span class="text-xs text-red-400 block mb-1">Thất bại / Reject</span>
+                    <span id="modalFailed" class="text-xl font-bold text-red-400">0</span>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Chi tiết theo trường</h4>
+                <div id="orgsList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div class="pt-2 text-right">
+                <button onclick="closeStatsModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Frontend Script -->
+    <script>
+        let currentTaskId = null;
+        let eventSource = null;
+        let allLogs = [];
+
+        // Load stats on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchStats();
+        });
+
+        function toggleProxySettings() {
+            const panel = document.getElementById('proxyPanel');
+            const chevron = document.getElementById('proxyChevron');
+            panel.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-90');
+        }
+
+        function toggleCaptchaSettings() {
+            const panel = document.getElementById('captchaPanel');
+            const chevron = document.getElementById('captchaChevron');
+            panel.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-90');
+        }
+
+        function updateProxyMode() {
+            const selected = document.querySelector('input[name="proxy_mode"]:checked').value;
+            const customBox = document.getElementById('customProxyBox');
+            if (selected === 'custom') {
+                customBox.classList.remove('hidden');
+            } else {
+                customBox.classList.add('hidden');
+            }
+        }
+
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) {
+                    document.getElementById('urlInput').value = text.trim();
+                }
+            } catch (err) {
+                alert('Vui lòng cấp quyền truy cập clipboard hoặc dán thủ công!');
+            }
+        }
+
+        async function fetchStats() {
+            try {
+                const resp = await fetch('/api/stats');
+                if (resp.ok) {
+                    const data = await resp.json();
+                    document.getElementById('quickTotal').textContent = data.total || 0;
+                    document.getElementById('quickSuccess').textContent = data.success || 0;
+                    document.getElementById('quickRate').textContent = (data.successRate || 0) + '%';
+                    
+                    document.getElementById('modalTotal').textContent = data.total || 0;
+                    document.getElementById('modalSuccess').textContent = data.success || 0;
+                    document.getElementById('modalFailed').textContent = data.failed || 0;
+
+                    const orgsList = document.getElementById('orgsList');
+                    orgsList.innerHTML = '';
+                    if (data.orgs && Object.keys(data.orgs).length > 0) {
+                        for (const [name, s] of Object.entries(data.orgs)) {
+                            const tot = (s.success || 0) + (s.failed || 0);
+                            const rate = tot ? Math.round((s.success / tot) * 100) : 0;
+                            const div = document.createElement('div');
+                            div.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-900 text-xs border border-slate-800';
+                            div.innerHTML = `
+                                <span class="font-medium text-slate-300 truncate max-w-[220px]" title="${name}">${name}</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-emerald-400 font-bold">${s.success} ✔</span>
+                                    <span class="text-red-400 font-bold">${s.failed} ✖</span>
+                                    <span class="text-slate-400 font-mono">${rate}%</span>
+                                </div>
+                            `;
+                            orgsList.appendChild(div);
+                        }
+                    } else {
+                        orgsList.innerHTML = '<div class="text-xs text-slate-500 italic p-2">Chưa có dữ liệu thống kê</div>';
+                    }
+                }
+            } catch (e) {
+                console.error("Error fetching stats:", e);
+            }
+        }
+
+        function openStatsModal() {
+            fetchStats();
+            document.getElementById('statsModal').classList.remove('hidden');
+        }
+
+        function closeStatsModal() {
+            document.getElementById('statsModal').classList.add('hidden');
+        }
+
+        function updateProgress(percent, statusMsg, badgeStep) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressPercent').textContent = percent + '%';
+            if (statusMsg) {
+                document.getElementById('statusText').textContent = statusMsg;
+            }
+
+            // Update step badges
+            const stepNum = badgeStep || Math.min(Math.floor(percent / 20) + 1, 5);
+            for (let i = 1; i <= 5; i++) {
+                const badge = document.getElementById('stepBadge' + i);
+                if (i < stepNum) {
+                    badge.className = 'py-1 px-1.5 rounded-lg bg-emerald-500/20 text-[10px] font-semibold text-emerald-400 border border-emerald-500/30';
+                } else if (i === stepNum) {
+                    badge.className = 'py-1 px-1.5 rounded-lg bg-blue-500/20 text-[10px] font-semibold text-blue-400 border border-blue-500/30 animate-pulse';
+                } else {
+                    badge.className = 'py-1 px-1.5 rounded-lg bg-slate-800/50 text-[10px] font-semibold text-slate-500';
+                }
+            }
+        }
+
+        function appendLog(timestamp, message, level = 'info') {
+            const body = document.getElementById('terminalBody');
+            const line = document.createElement('div');
+            line.className = 'flex items-start gap-2 leading-relaxed';
+
+            let colorClass = 'text-slate-300';
+            let icon = '<span class="text-blue-500 font-bold">ℹ</span>';
+            if (level === 'success') {
+                colorClass = 'text-emerald-400 font-semibold';
+                icon = '<span class="text-emerald-400 font-bold">✔</span>';
+            } else if (level === 'error') {
+                colorClass = 'text-red-400 font-semibold';
+                icon = '<span class="text-red-400 font-bold">✖</span>';
+            } else if (level === 'warning') {
+                colorClass = 'text-amber-400';
+                icon = '<span class="text-amber-400 font-bold">⚠</span>';
+            }
+
+            line.innerHTML = `
+                <span class="text-slate-500 select-none">[${timestamp}]</span>
+                ${icon}
+                <span class="${colorClass}">${message}</span>
+            `;
+
+            body.appendChild(line);
+            allLogs.push(`[${timestamp}] [${level.toUpperCase()}] ${message}`);
+
+            if (document.getElementById('autoScrollCheck').checked) {
+                body.scrollTop = body.scrollHeight;
+            }
+        }
+
+        function clearLogs() {
+            document.getElementById('terminalBody').innerHTML = '';
+            allLogs = [];
+        }
+
+        function copyLogs() {
+            if (allLogs.length === 0) return;
+            navigator.clipboard.writeText(allLogs.join('\n')).then(() => {
+                alert('Đã sao chép toàn bộ logs vào clipboard!');
+            });
+        }
+
+        async function startVerification(event) {
+            event.preventDefault();
+
+            const url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                alert('Vui lòng nhập link xác minh!');
+                return;
+            }
+
+            if (!url.includes('verificationId=')) {
+                if (!confirm('Cảnh báo: Link của bạn dường như không chứa "verificationId=". Bạn có chắc chắn muốn tiếp tục không?')) {
+                    return;
+                }
+            }
+
+            const schoolSelect = document.getElementById('schoolSelect').value;
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            const proxyMode = document.querySelector('input[name="proxy_mode"]:checked').value;
+            const customProxy = document.getElementById('customProxyInput').value.trim();
+            const captchaKey = document.getElementById('captchaKeyInput').value.trim();
+
+            // Set UI state to running
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+            document.getElementById('cancelBtn').classList.remove('hidden');
+            
+            document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-blue-500 animate-ping';
+            document.getElementById('statusText').textContent = 'ĐANG XÁC MINH...';
+            document.getElementById('resultCard').classList.add('hidden');
+            document.getElementById('docsCard').classList.add('hidden');
+
+            clearLogs();
+            updateProgress(5, 'Khởi tạo tác vụ xác minh...', 1);
+
+            try {
+                const response = await fetch('/api/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: url,
+                        school_id: schoolSelect ? parseInt(schoolSelect) : null,
+                        mode: mode,
+                        proxy_mode: proxyMode,
+                        custom_proxy: customProxy || null,
+                        captcha_key: captchaKey || null
+                    })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || 'Không thể khởi tạo tác vụ');
+                }
+
+                const data = await response.json();
+                currentTaskId = data.task_id;
+
+                // Connect to SSE stream
+                connectEventStream(currentTaskId);
+
+            } catch (err) {
+                appendLog(new Date().toLocaleTimeString(), err.message, 'error');
+                resetUIState(false);
+            }
+        }
+
+        function connectEventStream(taskId) {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource(`/api/verify/${taskId}/events`);
+
+            eventSource.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+
+                    if (data.type === 'log') {
+                        appendLog(data.timestamp, data.message, data.level);
+                        if (data.progress !== undefined && data.progress !== null) {
+                            updateProgress(data.progress);
+                        }
+                        if (data.data && data.data.docFiles && data.data.dirName) {
+                            renderGeneratedDocs(data.data.dirName, data.data.docFiles);
+                        }
+                    } else if (data.type === 'progress') {
+                        updateProgress(data.progress, data.message);
+                    } else if (data.type === 'docs') {
+                        renderGeneratedDocs(data.dirName, data.docFiles);
+                    } else if (data.type === 'result') {
+                        handleFinalResult(data);
+                    } else if (data.type === 'done') {
+                        eventSource.close();
+                        fetchStats();
+                    }
+                } catch (e) {
+                    console.error("SSE parse error:", e);
+                }
+            };
+
+            eventSource.onerror = () => {
+                eventSource.close();
+                // Check task status once via REST
+                checkTaskStatus(taskId);
+            };
+        }
+
+        async function checkTaskStatus(taskId) {
+            try {
+                const resp = await fetch(`/api/verify/${taskId}/status`);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.result) {
+                        handleFinalResult(data.result);
+                    } else {
+                        resetUIState(data.status === 'success');
+                    }
+                } else {
+                    resetUIState(false);
+                }
+            } catch (e) {
+                resetUIState(false);
+            }
+        }
+
+        async function cancelCurrentTask() {
+            if (!currentTaskId) return;
+            try {
+                await fetch(`/api/verify/${currentTaskId}/cancel`, { method: 'POST' });
+                appendLog(new Date().toLocaleTimeString(), 'Đã gửi yêu cầu dừng tác vụ', 'warning');
+            } catch (e) {
+                console.error("Cancel error:", e);
+            }
+        }
+
+        function renderGeneratedDocs(dirName, docFiles) {
+            const docsCard = document.getElementById('docsCard');
+            const gallery = document.getElementById('docsGallery');
+            docsCard.classList.remove('hidden');
+            gallery.innerHTML = '';
+
+            const docTitles = {
+                'scanned_id_card.png': 'Thẻ sinh viên Scan',
+                'class_schedule.png': 'Thời khóa biểu',
+                'tuition_receipt.png': 'Biên lai học phí'
+            };
+
+            docFiles.forEach(file => {
+                const imgUrl = `/api/docs/${dirName}/${file}`;
+                const title = docTitles[file] || file;
+
+                const card = document.createElement('div');
+                card.className = 'rounded-2xl bg-slate-900 border border-slate-800 p-2.5 flex flex-col gap-2 hover:border-blue-500/50 transition group';
+                card.innerHTML = `
+                    <div class="h-32 w-full rounded-xl overflow-hidden bg-black/40 relative cursor-pointer" onclick="openImageModal('${imgUrl}')">
+                        <img src="${imgUrl}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                            <span class="px-2.5 py-1 rounded-lg bg-blue-600/90 text-white text-[11px] font-semibold"><i class="fa-solid fa-magnifying-glass-plus"></i> Xem lớn</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-xs font-semibold text-slate-200 truncate" title="${title}">${title}</span>
+                        <a href="${imgUrl}" download="${file}" class="text-slate-400 hover:text-blue-400 text-xs transition" title="Tải ảnh">
+                            <i class="fa-solid fa-download"></i>
+                        </a>
+                    </div>
+                `;
+                gallery.appendChild(card);
+            });
+        }
+
+        function handleFinalResult(result) {
+            resetUIState(result.status === 'success');
+            const resultCard = document.getElementById('resultCard');
+            resultCard.classList.remove('hidden');
+
+            const status = result.status;
+
+            if (status === 'success') {
+                updateProgress(100, 'XÁC MINH THÀNH CÔNG', 5);
+                document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-emerald-500';
+                resultCard.className = 'rounded-3xl p-6 border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-950 space-y-4';
+                resultCard.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-2xl">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-extrabold text-emerald-400">XÁC MINH THÀNH CÔNG!</h3>
+                            <p class="text-xs text-slate-300">Gói Google One AI Premium (Gemini Advanced 2TB) của bạn đã được duyệt!</p>
+                        </div>
+                    </div>
+                    ${generateStudentInfoHtml(result)}
+                `;
+            } else if (status === 'pending') {
+                updateProgress(100, 'HỒ SƠ ĐÃ NỘP - ĐANG DUYỆT', 5);
+                document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-amber-500';
+                resultCard.className = 'rounded-3xl p-6 border border-amber-500/30 bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-950 space-y-4';
+                resultCard.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-2xl">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-extrabold text-amber-400">ĐÃ NỘP HỒ SƠ - ĐANG CHỜ SHEERID XÉT DUYỆT</h3>
+                            <p class="text-xs text-slate-300">Hồ sơ đã được gửi hoàn tất. SheerID sẽ gửi kết quả kích hoạt về email Google của bạn trong 24-48 giờ tới.</p>
+                        </div>
+                    </div>
+                    ${generateStudentInfoHtml(result)}
+                `;
+            } else if (status === 'rejected') {
+                updateProgress(100, 'SHEERID TỪ CHỐI', 5);
+                document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-red-500';
+                resultCard.className = 'rounded-3xl p-6 border border-red-500/30 bg-gradient-to-br from-red-950/40 via-slate-900 to-slate-950 space-y-4';
+                resultCard.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-2xl">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-extrabold text-red-400">SHEERID ĐÃ TỪ CHỐI HỒ SƠ!</h3>
+                            <p class="text-xs text-slate-300">${result.error || 'Lỗi kiểm tra fraud hoặc giấy tờ không khớp'}</p>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-900/80 text-xs text-slate-400 border border-slate-800">
+                        💡 <strong>Lời khuyên:</strong> Hãy thử tạo lại link xác minh mới, chọn trường đại học khác hoặc kiểm tra lại proxy residential.
+                    </div>
+                    ${generateStudentInfoHtml(result)}
+                `;
+            } else if (status === 'docs_generated') {
+                updateProgress(100, 'ĐÃ TẠO GIẤY TỜ THÀNH CÔNG', 3);
+                document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-blue-500';
+                resultCard.className = 'rounded-3xl p-6 border border-blue-500/30 bg-gradient-to-br from-blue-950/40 via-slate-900 to-slate-950 space-y-4';
+                resultCard.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 text-2xl">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-extrabold text-blue-400">ĐÃ TẠO XONG 3 LOẠI TÀI LIỆU MINH CHỨNG!</h3>
+                            <p class="text-xs text-slate-300">Bạn có thể tải các ảnh bên dưới về để tự upload trực tiếp lên trang SheerID trên trình duyệt.</p>
+                        </div>
+                    </div>
+                    ${generateStudentInfoHtml(result)}
+                `;
+            } else {
+                updateProgress(100, 'CÓ LỖI XẢY RA', 5);
+                document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-red-500';
+                resultCard.className = 'rounded-3xl p-6 border border-red-500/30 bg-slate-900 space-y-3';
+                resultCard.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-triangle-exclamation text-red-400 text-2xl"></i>
+                        <div>
+                            <h3 class="text-sm font-bold text-red-400">Quá trình xác minh thất bại</h3>
+                            <p class="text-xs text-slate-300">${result.error || 'Lỗi không xác định'}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function generateStudentInfoHtml(result) {
+            if (!result.student) return '';
+            return `
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                    <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <span class="text-[10px] text-slate-500 uppercase block">Sinh viên</span>
+                        <span class="text-xs font-bold text-white truncate block">${result.student}</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <span class="text-[10px] text-slate-500 uppercase block">Trường đại học</span>
+                        <span class="text-xs font-bold text-white truncate block" title="${result.school || ''}">${result.school || '--'}</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <span class="text-[10px] text-slate-500 uppercase block">Email EDU</span>
+                        <span class="text-xs font-bold text-blue-400 truncate block font-mono" title="${result.email || ''}">${result.email || '--'}</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <span class="text-[10px] text-slate-500 uppercase block">Ngày sinh</span>
+                        <span class="text-xs font-bold text-white block font-mono">${result.dob || '--'}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function resetUIState(isSuccess) {
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-rocket"></i> Bắt đầu xác minh';
+            document.getElementById('cancelBtn').classList.add('hidden');
+        }
+
+        function openImageModal(imgSrc) {
+            document.getElementById('modalImage').src = imgSrc;
+            document.getElementById('modalDownloadLink').href = imgSrc;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
